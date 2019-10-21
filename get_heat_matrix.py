@@ -1,6 +1,7 @@
 import numpy as np
 
 def heat_matrix(mesh,K,boundary):
+    ## CREAT MATRIX WHIT FINITE VOLUME
     A=np.zeros((mesh.points.shape[0],mesh.points.shape[0]))
     for i in range(mesh.points.shape[0]):
         if mesh.points[i,0]==boundary[0] or mesh.points[i,0]==boundary[1] or mesh.points[i,1]==boundary[2] or mesh.points[i,1]==boundary[3]:
