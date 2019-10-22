@@ -20,5 +20,5 @@ def error_l2(S_a,S_fv):
         
     return error
 def error_linf(S_a,S_fv):
-    error=np.max(np.ans(S_a-S_fv))
+    error=np.max(np.abs(S_a-S_fv))
     return error

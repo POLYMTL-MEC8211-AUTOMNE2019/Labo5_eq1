@@ -8,13 +8,13 @@ Created on Mon Oct 21 16:29:05 2019
 """
 import numpy as np
 
-def heat_rhs(mesh,rhs,boundary):
+def heat_rhs(mesh,rhs,boundary,termsource,boundary_value):
     B=np.zeros((mesh.points.shape[0],1))
     for i in range(mesh.points.shape[0]):
         if mesh.points[i,0]==boundary[0] or mesh.points[i,0]==boundary[1] or mesh.points[i,1]==boundary[2] or mesh.points[i,1]==boundary[3]:
             #PUT BOUNDARY CONDITION HERE !
-            B[i]=0
+            B[i]=boundary_value[i]
         else:
             #PUT SOURCE TERM HERE !
-            B[i]=1
+            B[i]=-termsource[i]
     return B
