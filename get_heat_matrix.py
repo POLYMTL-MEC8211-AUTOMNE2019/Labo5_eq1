@@ -1,3 +1,6 @@
+#finie volume code for heat equation 2 D uniform mesh by Lucka Barbeau & Matthew Coffey
+
+
 import numpy as np
 
 def heat_matrix(mesh,K,boundary):

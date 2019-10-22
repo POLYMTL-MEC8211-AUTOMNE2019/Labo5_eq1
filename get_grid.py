@@ -1,3 +1,5 @@
+#finie volume code for heat equation 2 D uniform mesh by Lucka Barbeau & Matthew Coffey
+
 # function that return a uniform grid
 import numpy as np
 

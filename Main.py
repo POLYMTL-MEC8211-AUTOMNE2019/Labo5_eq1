@@ -16,7 +16,7 @@ Ymin=0
 Ymax=1
 boundary=[Xmin,Xmax,Ymin,Ymax]
 
-nb_dof_per_dim=10
+nb_dof_per_dim=100
 
 mesh=get_grid.mesh(Xmin,Xmax,Ymin,Ymax,nb_dof_per_dim)
 K=np.ones((mesh.points.shape[0],1))
@@ -27,7 +27,7 @@ U=np.linalg.solve(A,B)
 
 
 
-x=mesh.points[:,0]
+x=mesh.points[:,0]/(mesh.dy*mesh.dx)
 y=mesh.points[:,1]
 z=U[:,0]
 

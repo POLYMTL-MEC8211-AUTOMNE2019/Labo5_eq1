@@ -1,3 +1,5 @@
+#finie volume code for heat equation 2 D uniform mesh by Lucka Barbeau & Matthew Coffey
+
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct 21 16:29:05 2019
