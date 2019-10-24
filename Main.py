@@ -12,9 +12,9 @@ from error import *
 import math
 
 Xmin = 0
-Xmax = 25
+Xmax = 5
 Ymin = 0
-Ymax = 15
+Ymax = 3
 boundary = [Xmin, Xmax, Ymin, Ymax]
 
 k, T, x, y = symbols('k T x y')
@@ -29,8 +29,9 @@ ax = 1 / 3
 ay = 1 / 4
 axy = 1 / 2
 L = 5
-
-T_hat = T0 + Tx * cos(ax * pi * x / L) + Ty * sin(ay * pi * y / L) + Txy * sin(axy * pi * x * y / L ** 2)
+L2= 3
+#### IMPORTANT NOTE !!! !!!!! POUR AVOIR LA BONNE SURFACE DE REPONSE COMPARATIVEMENT AU LIVRE L DOIT ETRE ENLEVÉ  SI L'ON GARDE L ON DOIT AVOIR X DE 0 A 25 et X de 0 A 15 !!!!
+T_hat = T0 + Tx * cos(ax * pi * x ) + Ty * sin(ay * pi * y  ) + Txy * sin(axy * pi * x * y  )
 
 k0 = 1
 kx = 4
@@ -40,7 +41,8 @@ bx = 1 / 2
 by = 1 / 3
 bxy = 1 / 4
 
-k_hat = k0 + kx * sin(bx * pi * x / L) + ky * cos(by * pi * y / L) + kxy * cos(bxy * pi * x * y / L ** 2)
+#### IMPORTANT NOTE !!! !!!!! POUR AVOIR UNE SOLUTION PHYSIQUE ON DOIT GARER L DANS L'éQUATION CAR SINON K DEVIENT NEGATIF , SOLUTION DIVERENTE DE L'EQUATION DIFFERENTIEL !!!!
+k_hat = k0 + kx * sin(bx * pi * x / L) + ky * cos(by * pi * y / L2) + kxy * cos(bxy * pi * x * y / L )
 
 heat_eq_a = diff(1 * diff(T_hat, x), x) + diff(1 * diff(T_hat, y), y)
 
@@ -53,6 +55,7 @@ f_a = lambdify([x, y], heat_eq_a, 'numpy')
 f_b = lambdify([x, y], heat_eq_b, 'numpy')
 
 mesh_sizes = np.array([17, 33, 65, 129])
+
 error = np.zeros((2, len(mesh_sizes)))
 i = 0
 
@@ -76,54 +79,40 @@ for h in mesh_sizes:
     sol_calc_b = U_b[:, 0]
     error[0, i] = error_l1(sol_exact, sol_calc_a)
     error[1, i] = error_l1(sol_exact, sol_calc_b)
-
     i += 1
 
+fig2= plt.figure()
 plt.loglog(mesh_sizes, error[0, :])
 plt.loglog(mesh_sizes, error[1, :])
-plt.xlabel("Log(h)")
-plt.ylabel("Log(Erreur)")
+plt.xlabel("h")
+plt.ylabel("Erreur")
 plt.legend(("Erreur pour une conductivité thermique constante", "Erreur pour une conductivité thermique variable"))
 plt.title('Ordre de convergence des erreurs')
+plt.show()
 
+##### CALCUL  ERREUR COMME 5.3.2 
 p_const = math.log(error[0, -2]/error[0, -1])/math.log(mesh_sizes[-2]/mesh_sizes[-1])
 p_var = math.log(error[1, -2]/error[1, -1])/math.log(mesh_sizes[-2]/mesh_sizes[-1])
 
 print("L'ordre de convergence pour une conductivité thermique constante est : {:5.2f}".format(p_const))
 print("L'ordre de convergence pour une conductivité thermique variable est : {:5.2f}".format(p_var))
 
-# print(error_linf(z, z2))
-#
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-#
-# surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True, cmap=plt.cm.plasma)
-#
-# # U_bar = plt.contourf(evalX, evalY, np.transpose(sol_rho), 10, cmap=plt.cm.plasma, origin='lower')
-# cbar = plt.colorbar(surf)
-# cbar.set_label('temp')
-#
-# plt.show()
-#
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-#
-# surf = ax.plot_trisurf(x, y, z2, linewidth=0.2, antialiased=True, cmap=plt.cm.plasma)
-#
-# # U_bar = plt.contourf(evalX, evalY, np.transpose(sol_rho), 10, cmap=plt.cm.plasma, origin='lower')
-# cbar = plt.colorbar(surf)
-# cbar.set_label('temp')
-#
-# plt.show()
+x=mesh.points[:,0]
+y=mesh.points[:,1]
+z=sol_calc_b
 
-# mesh_graph=np.meshgrid
-# fig_sec = plt.figure()
-# sol_sec_plot = plt.contourf(evalX, evalY, np.transpose(sol_sec), 10, cmap=plt.cm.plasma, origin='lower')
-# sol_sec_plot_2 = plt.contour(sol_sec_plot, levels=sol_sec_plot.levels[::1], colors='k', origin='lower')
-# cbar = plt.colorbar(sol_sec_plot)
-# cbar.set_label('sec')
-# cbar.add_lines(sol_sec_plot_2)
-# plt.xlabel("x/l")
-# plt.ylabel("y/l")
-# plt.title("analytics solution sec")
-# plt.show()
+
+#### REPRESENTATION DE LA SURFACE 
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True, cmap=plt.cm.plasma)
+
+
+cbar = plt.colorbar(surf)
+cbar.set_label('temp')
+plt.xlabel("x")
+plt.ylabel("Y")
+plt.title('Surface de reponse pour la temperature selon la solution manifacturer.')
+plt.show()
+
