@@ -9,6 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from eval_vector import *
 from error import *
+import math
 
 Xmin = 0
 Xmax = 25
@@ -51,20 +52,45 @@ k_manufacturee = lambdify([x, y], k_hat, 'numpy')
 f_a = lambdify([x, y], heat_eq_a, 'numpy')
 f_b = lambdify([x, y], heat_eq_b, 'numpy')
 
-h1 = 17
-mesh1 = get_grid.mesh(Xmin, Xmax, Ymin, Ymax, h1)
-K_a1 = np.ones((mesh1.points.shape[0], 1))
-K_b1 = eval_vector(k_manufacturee, mesh1.points[:, 0], mesh1.points[:, 1])
-T_exact1 = eval_vector(T_manufacturee, mesh1.points[:, 0], mesh1.points[:, 1])
-source_a1 = eval_vector(f_a, mesh1.points[:, 0], mesh1.points[:, 1])
-source_b1 = eval_vector(f_b, mesh1.points[:, 0], mesh1.points[:, 1])
-A1 = get_heat_matrix.heat_matrix(mesh1, K_a1, boundary)
-B1 = get_heat_rhs.heat_rhs(mesh1, K_a1, boundary, source_a1, T_exact1)
-U1 = np.linalg.solve(A1, B1)
-x1 = mesh1.points[:, 0]
-y1 = mesh1.points[:, 1]
-sol_exact1 = T_exact1[:, 0]
-sol_calc1 = U1[:, 0]
+mesh_sizes = np.array([17, 33, 65, 129])
+error = np.zeros((2, len(mesh_sizes)))
+i = 0
+
+for h in mesh_sizes:
+    mesh = get_grid.mesh(Xmin, Xmax, Ymin, Ymax, h)
+    K_a = np.ones((mesh.points.shape[0], 1))
+    K_b = eval_vector(k_manufacturee, mesh.points[:, 0], mesh.points[:, 1])
+    T_exact = eval_vector(T_manufacturee, mesh.points[:, 0], mesh.points[:, 1])
+    source_a = eval_vector(f_a, mesh.points[:, 0], mesh.points[:, 1])
+    source_b = eval_vector(f_b, mesh.points[:, 0], mesh.points[:, 1])
+    A_a = get_heat_matrix.heat_matrix(mesh, K_a, boundary)
+    B_a = get_heat_rhs.heat_rhs(mesh, K_a, boundary, source_a, T_exact)
+    A_b = get_heat_matrix.heat_matrix(mesh, K_b, boundary)
+    B_b = get_heat_rhs.heat_rhs(mesh, K_b, boundary, source_b, T_exact)
+    U_a = np.linalg.solve(A_a, B_a)
+    U_b = np.linalg.solve(A_b, B_b)
+    x1 = mesh.points[:, 0]
+    y1 = mesh.points[:, 1]
+    sol_exact = T_exact[:, 0]
+    sol_calc_a = U_a[:, 0]
+    sol_calc_b = U_b[:, 0]
+    error[0, i] = error_l1(sol_exact, sol_calc_a)
+    error[1, i] = error_l1(sol_exact, sol_calc_b)
+
+    i += 1
+
+plt.loglog(mesh_sizes, error[0, :])
+plt.loglog(mesh_sizes, error[1, :])
+plt.xlabel("Log(h)")
+plt.ylabel("Log(Erreur)")
+plt.legend(("Erreur pour une conductivité thermique constante", "Erreur pour une conductivité thermique variable"))
+plt.title('Ordre de convergence des erreurs')
+
+p_const = math.log(error[0, -2]/error[0, -1])/math.log(mesh_sizes[-2]/mesh_sizes[-1])
+p_var = math.log(error[1, -2]/error[1, -1])/math.log(mesh_sizes[-2]/mesh_sizes[-1])
+
+print("L'ordre de convergence pour une conductivité thermique constante est : {:5.2f}".format(p_const))
+print("L'ordre de convergence pour une conductivité thermique variable est : {:5.2f}".format(p_var))
 
 # print(error_linf(z, z2))
 #
