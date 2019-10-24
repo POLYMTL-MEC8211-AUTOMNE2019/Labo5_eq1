@@ -29,7 +29,7 @@ ax = 1 / 3
 ay = 1 / 4
 axy = 1 / 2
 L = 5
-L2= 3
+
 #### IMPORTANT NOTE !!! !!!!! POUR AVOIR LA BONNE SURFACE DE REPONSE COMPARATIVEMENT AU LIVRE L DOIT ETRE ENLEVÉ  SI L'ON GARDE L ON DOIT AVOIR X DE 0 A 25 et X de 0 A 15 !!!!
 T_hat = T0 + Tx * cos(ax * pi * x ) + Ty * sin(ay * pi * y  ) + Txy * sin(axy * pi * x * y  )
 
@@ -42,7 +42,7 @@ by = 1 / 3
 bxy = 1 / 4
 
 #### IMPORTANT NOTE !!! !!!!! POUR AVOIR UNE SOLUTION PHYSIQUE ON DOIT GARER L DANS L'éQUATION CAR SINON K DEVIENT NEGATIF , SOLUTION DIVERENTE DE L'EQUATION DIFFERENTIEL !!!!
-k_hat = k0 + kx * sin(bx * pi * x / L) + ky * cos(by * pi * y / L2) + kxy * cos(bxy * pi * x * y / L )
+k_hat = k0 + kx * sin(bx * pi * x / L) + ky * cos(by * pi * y / L) + kxy * cos(bxy * pi * x * y / L )
 
 heat_eq_a = diff(1 * diff(T_hat, x), x) + diff(1 * diff(T_hat, y), y)
 
